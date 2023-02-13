@@ -57,7 +57,6 @@ df = spark \
     .load()
 
 # Parse the json data
-# Parse the json data
 parsed_df = df.select(
     from_json(col("value").cast("string"), json_schema).alias("data")
 ).select("data.*")
