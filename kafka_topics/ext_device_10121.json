@@ -1,0 +1,36 @@
+{
+  "persistTime" : "2020-12-05T16:59:33.032Z",
+  "current" : {
+    "device" : "ID 90834761_1",
+    "type" : "L&T Aurora Single Phase Smart Meter",
+    "group" : "SPPL - AMI",
+    "inventoryState" : "unknown",
+    "managementState" : "registered",
+    "communicationId" : "1",
+    "manufacturer" : "",
+    "description" : "",
+    "model" : "",
+    "location" : {
+      "geo" : {
+        "latitude" : "0.0",
+        "longitude" : "0.0"
+      },
+      "address" : {
+        "city" : "",
+        "postalCode" : "",
+        "street" : "",
+        "houseNumber" : "",
+        "floor" : "",
+        "company" : "",
+        "country" : "",
+        "reference" : "",
+        "timeZone" : "",
+        "region" : "",
+        "district" : ""
+      },
+      "logicalInstallationPoint" : ""
+    },
+    "tags" : [ ]
+  }
+}
+
