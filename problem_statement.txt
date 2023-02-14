@@ -1,85 +1,41 @@
 Spark Version:spark-3.0.0-bin-hadoop3.2
-Kafka Topic Name: ext_metering-point_10121
+Kafka Topic Name: ext_device-derived-measurement_10121
 Kafka Host:zonos.engrid.in
 kafka port: 9092
 
 Sample Record of the kafka topic:
 {
-  "persistTime" : "2021-05-11T06:05:01.330Z",
-  "previous" : {
-    "meteringPoint" : "7384934608",
-    "group" : "Protyasha",
-    "serviceLevel" : "",
-    "devices" : [ {
-      "device" : "TESTLNT0001",
-      "assignTime" : "2020-12-31T18:30:00Z",
-      "removeTime" : "2021-03-31T18:30:00Z"
-    }, {
-      "device" : "TESTLNT0002",
-      "assignTime" : "2021-04-01T06:25:00Z"
-    } ],
-    "stateHistory" : [ {
-      "state" : "connected",
-      "activeSince" : "2021-01-01T10:49:00Z"
-    } ],
-    "location" : {
-      "geo" : {
-        "latitude" : "22.597921",
-        "longitude" : "88.413098"
-      },
-      "address" : {
-        "city" : "",
-        "postalCode" : "",
-        "street" : "",
-        "houseNumber" : "",
-        "floor" : "",
-        "company" : "",
-        "country" : "",
-        "reference" : "",
-        "timeZone" : "",
-        "region" : "",
-        "district" : ""
-      }
-    }
-  },
-  "current" : {
-    "meteringPoint" : "7384934608",
-    "group" : "Protyasha",
-    "serviceLevel" : "",
-    "devices" : [ {
-      "device" : "TESTLNT0001",
-      "assignTime" : "2020-12-31T18:30:00Z",
-      "removeTime" : "2021-03-31T18:30:00Z"
-    }, {
-      "device" : "TESTLNT0002",
-      "assignTime" : "2021-04-01T06:25:00Z",
-      "removeTime" : "2021-05-11T06:04:55Z"
-    } ],
-    "stateHistory" : [ {
-      "state" : "connected",
-      "activeSince" : "2021-01-01T10:49:00Z"
-    } ],
-    "location" : {
-      "geo" : {
-        "latitude" : "22.597921",
-        "longitude" : "88.413098"
-      },
-      "address" : {
-        "city" : "",
-        "postalCode" : "",
-        "street" : "",
-        "houseNumber" : "",
-        "floor" : "",
-        "company" : "",
-        "country" : "",
-        "reference" : "",
-        "timeZone" : "",
-        "region" : "",
-        "district" : ""
-      }
-    }
-  }
+  "device" : "JPM10050325",
+  "register" : "0-0:96.2.0*255",
+  "persistTime" : "2023-01-31T13:53:00.680Z",
+  "unit" : "1",
+  "consumptionDataPoints" : [ {
+    "time" : "2023-01-29T19:00:00Z",
+    "value" : "4",
+    "quality" : "true_value"
+  }, {
+    "time" : "2023-01-29T20:00:00Z",
+    "value" : "4",
+    "quality" : "true_value"
+  }, {
+    "time" : "2023-01-29T21:00:00Z",
+    "value" : "4",
+    "quality" : "true_value"
+  }, {
+    "time" : "2023-01-29T22:00:00Z",
+    "value" : "4",
+    "quality" : "true_value"
+  }, {
+    "time" : "2023-01-29T23:00:00Z",
+    "value" : "4",
+    "quality" : "true_value"
+  }, {
+    "time" : "2023-01-30T00:00:00Z",
+    "value" : "4",
+    "quality" : "true_value"
+  } ]
 }
+
 
 
 
@@ -88,6 +44,7 @@ Write a pyspark code that:
 2. Flatten the nested json completely, by defining a schmea
 3. Insert the flattened data into a dataframe
 4. Print the dataframe as table
+5. Use functions, exception handling and comments 
 
 Use this code as reference code:
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType, DoubleType
