@@ -68,5 +68,6 @@ def write_to_cassandra(batch_df, batch_id):
 parsed_df.writeStream \
   .foreachBatch(write_to_cassandra) \
   .outputMode("append") \
+  .option("checkpointLocation", "/var/log/spark/checkpoints") \
   .start() \
   .awaitTermination()
