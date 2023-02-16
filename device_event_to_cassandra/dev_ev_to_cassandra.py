@@ -54,7 +54,7 @@ parsed_df = df.selectExpr("CAST(value AS STRING)") \
 
 # Write the parsed DataFrame to Cassandra using foreachBatch
 def write_to_cassandra(batch_df, batch_id):
-    batch_df.printSchema()
+    #batch_df.printSchema()
     try:
         batch_df.write \
           .format("org.apache.spark.sql.cassandra") \
