@@ -61,10 +61,22 @@ kafka_df = kafka_df.selectExpr(
     "profile"
 ).withColumn("value", col("value").cast(FloatType()))
 
+# drop the unwanted column
+kafka_df = kafka_df.drop('dataPoint.measureTime','status')
+# rename the remaining columns
+kafka_df = kafka_df.withColumnRenamed("measureTime", "mtime") \
+    .withColumnRenamed("receiveTime", "rtime") \
+    .withColumnRenamed("persistTime", "ptime") \
+    .withColumnRenamed("readingReason", "readingreason")
+
+# print the schema of the modified DataFrame
+kafka_df.printSchema()
+
 # start the streaming query
 query = kafka_df.writeStream \
     .format("console") \
     .outputMode("append") \
+    .option("truncate", "false") \
     .start()
 
 query.awaitTermination()
