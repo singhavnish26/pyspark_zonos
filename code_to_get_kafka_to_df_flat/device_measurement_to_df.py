@@ -60,9 +60,10 @@ flattened_df = flattened_df.selectExpr(
 )
 
 # Print the parsed DataFrame
-query = flattened_df.writeStream \
-    .outputMode("append") \
-    .format("console") \
-    .start()
+query = df \
+  .writeStream \
+  .format("console") \
+  .option("truncate", "false") \
+  .start()
 
-query.awaitTermination()
+query.awaitTermination() 
