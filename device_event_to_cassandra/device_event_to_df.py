@@ -25,7 +25,7 @@ df = spark \
   .load()
 
 # Print the schema of the DataFrame
-df.printSchema()
+#df.printSchema()
 
 # Define the schema for the data
 schema = StructType([
@@ -44,6 +44,9 @@ schema = StructType([
 parsed_df = df.selectExpr("CAST(value AS STRING)") \
   .select(from_json(col("value"), schema).alias("data")) \
   .select("data.*")
+parsed_df.printSchema()
+parsed_df=parsed_df.drop("context")
+parsed_df.printSchema()
 
 # Print the data as a table
 query = parsed_df \

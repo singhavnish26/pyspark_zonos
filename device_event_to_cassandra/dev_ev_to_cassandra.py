@@ -5,7 +5,7 @@ from pyspark.sql import SparkSession
 # Create Spark session
 spark = SparkSession \
   .builder \
-  .appName("KafkaStreamToDataFrame") \
+  .appName("KafkaStreamToCassandra") \
   .config("spark.cassandra.connection.host", "13.232.25.194") \
   .config("spark.cassandra.auth.username", "cassandra") \
   .config("spark.cassandra.auth.password", "cassandra") \
@@ -28,9 +28,6 @@ df = spark \
   .option("startingOffsets", "earliest") \
   .load()
 
-# Print the schema of the DataFrame
-#df.printSchema()
-
 # Define the schema for the data
 schema = StructType([
   StructField("device", StringType(), True),
@@ -47,30 +44,29 @@ schema = StructType([
 # Parse the value column into a DataFrame using the defined schema
 parsed_df = df.selectExpr("CAST(value AS STRING)") \
   .select(from_json(col("value"), schema).alias("data")) \
-  .select("data.*")
+  .select("data.*") \
+  .withColumnRenamed("firstOccurrenceTime", "firstoccurrencetime") \
+  .withColumnRenamed("lastOccurrenceTime", "lastoccurrencetime") \
+  .withColumnRenamed("occurrenceCount", "occurrencecount") \
+  .withColumnRenamed("receiveTime", "receivetime") \
+  .withColumnRenamed("persistTime", "persisttime") \
+  .drop("context")
 
 # Write the parsed DataFrame to Cassandra using foreachBatch
 def write_to_cassandra(batch_df, batch_id):
-    if batch_df is not None and not batch_df.rdd.isEmpty():
-        batch_df.printSchema()
-        try:
-            batch_df.write \
-              .format("org.apache.spark.sql.cassandra") \
-              .options(table="dev_event", keyspace="poc") \
-              .mode("append") \
-              .option("confirm.truncate", "true") \
-              .option("spark.cassandra.output.ignoreNulls", "true") \
-              .option("spark.cassandra.output.batch.grouping.buffer.size", "5000") \
-              .option("spark.cassandra.output.concurrent.writes", "100") \
-              .option("spark.cassandra.output.batch.grouping.key", "device") \
-              .save()
-        except Exception as e:
-            print(f"Error writing to Cassandra: {str(e)}")
+    batch_df.printSchema()
+    try:
+        batch_df.write \
+          .format("org.apache.spark.sql.cassandra") \
+          .options(table="device_event", keyspace="poc") \
+          .mode("append") \
+          .option("spark.cassandra.output.ignoreNulls", "true") \
+          .save()
+    except Exception as e:
+        print(f"Error writing to Cassandra: {str(e)}")
 
-
-query = parsed_df \
-  .writeStream \
+parsed_df.writeStream \
   .foreachBatch(write_to_cassandra) \
-  .start()
-
-query.awaitTermination()
+  .outputMode("append") \
+  .start() \
+  .awaitTermination()
