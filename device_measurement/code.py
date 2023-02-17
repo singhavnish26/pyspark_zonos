@@ -2,7 +2,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
 from pyspark.sql.types import StructType, StructField, StringType, ArrayType, FloatType
 
-# set up the SparkSession
+# Create Spark session
 spark = SparkSession \
   .builder \
   .appName("KafkaStreamToCassandra") \
@@ -10,6 +10,8 @@ spark = SparkSession \
   .config("spark.cassandra.auth.username", "cassandra") \
   .config("spark.cassandra.auth.password", "cassandra") \
   .getOrCreate()
+
+# Set the Spark log level to ERROR
 sc = spark.sparkContext
 sc.setLogLevel('ERROR')
 
@@ -38,7 +40,6 @@ kafka_df = spark \
     .format("kafka") \
     .option("kafka.bootstrap.servers", "zonos.engrid.in:9092") \
     .option("subscribe", "ext_device-measurement_10121") \
-    .option("startingOffsets", "earliest") \
     .load() \
     .select(from_json(col("value").cast("string"), schema).alias("data")) \
     .select("data.*")
@@ -79,6 +80,8 @@ kafka_df = kafka_df.withColumnRenamed("measureTime", "measuretime") \
 # print the schema of the modified DataFrame
 kafka_df.printSchema()
 
+
+
 # Write the parsed DataFrame to Cassandra using foreachBatch
 def write_to_cassandra(batch_df, batch_id):
     #batch_df.printSchema()
@@ -91,6 +94,8 @@ def write_to_cassandra(batch_df, batch_id):
           .save()
     except Exception as e:
         print(f"Error writing to Cassandra: {str(e)}")
+
+
 
 kafka_df.writeStream \
   .foreachBatch(write_to_cassandra) \
