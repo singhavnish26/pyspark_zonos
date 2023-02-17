@@ -2,7 +2,6 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
 from pyspark.sql.types import StructType, StructField, StringType, ArrayType, IntegerType, FloatType, DateType
 
-
 # Create Spark session
 spark = SparkSession \
   .builder \
@@ -16,7 +15,7 @@ spark = SparkSession \
 sc = spark.sparkContext
 sc.setLogLevel('ERROR')
 
-# define the schema for the Kafka message
+# Define the schema for the Kafka message
 schema = StructType([
     StructField("device", StringType(), True),
     StructField("register", StringType(), True),
@@ -35,7 +34,7 @@ schema = StructType([
     ]), True)
 ])
 
-# read data from Kafka into a DataFrame
+# Read data from Kafka into a DataFrame
 kafka_df = spark \
     .readStream \
     .format("kafka") \
@@ -46,8 +45,7 @@ kafka_df = spark \
     .selectExpr("data.device", "data.register", "data.date", 
                 "data.meterReads.*", "data.deliveryDelay.*")
 
-kafka_df.printSchema()
-
+# Rename the columns in the DataFrame
 kafka_df = kafka_df \
     .withColumnRenamed("expected", "mr_expected") \
     .withColumnRenamed("received", "mr_received") \
@@ -57,21 +55,12 @@ kafka_df = kafka_df \
     .withColumnRenamed("minimum", "dd_minimum") \
     .withColumnRenamed("maximum", "dd_maximum") \
     .withColumnRenamed("average", "dd_average")
-# print the schema of the modified DataFrame
+
+# Print the schema of the DataFrame
 kafka_df.printSchema()
-
-#Print to console
-"""query = kafka_df \
-  .writeStream \
-  .format("console") \
-  .option("truncate", "false") \
-  .start()
-
-query.awaitTermination()"""
 
 # Write the parsed DataFrame to Cassandra using foreachBatch
 def write_to_cassandra(batch_df, batch_id):
-    #batch_df.printSchema()
     try:
         batch_df.write \
           .format("org.apache.spark.sql.cassandra") \
@@ -82,8 +71,7 @@ def write_to_cassandra(batch_df, batch_id):
     except Exception as e:
         print(f"Error writing to Cassandra: {str(e)}")
 
-
-
+# Write the parsed DataFrame to Cassandra using foreachBatch
 kafka_df.writeStream \
   .foreachBatch(write_to_cassandra) \
   .outputMode("append") \
