@@ -2,8 +2,16 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
 from pyspark.sql.types import StructType, StructField, StringType, ArrayType, FloatType
 
-# set up the SparkSession
-spark = SparkSession.builder.appName("KafkaConsumer").getOrCreate()
+# Create Spark session
+spark = SparkSession \
+  .builder \
+  .appName("KafkaStreamToCassandra") \
+  .config("spark.cassandra.connection.host", "13.232.25.194") \
+  .config("spark.cassandra.auth.username", "cassandra") \
+  .config("spark.cassandra.auth.password", "cassandra") \
+  .getOrCreate()
+
+# Set the Spark log level to ERROR
 sc = spark.sparkContext
 sc.setLogLevel('ERROR')
 
@@ -32,7 +40,6 @@ kafka_df = spark \
     .format("kafka") \
     .option("kafka.bootstrap.servers", "zonos.engrid.in:9092") \
     .option("subscribe", "ext_device-measurement_10121") \
-    .option("startingOffsets", "earliest") \
     .load() \
     .select(from_json(col("value").cast("string"), schema).alias("data")) \
     .select("data.*")
@@ -73,11 +80,26 @@ kafka_df = kafka_df.withColumnRenamed("measureTime", "measuretime") \
 # print the schema of the modified DataFrame
 kafka_df.printSchema()
 
-# start the streaming query
-query = kafka_df.writeStream \
-    .format("console") \
-    .outputMode("append") \
-    .option("truncate", "false") \
-    .start()
 
-query.awaitTermination()
+
+# Write the parsed DataFrame to Cassandra using foreachBatch
+def write_to_cassandra(batch_df, batch_id):
+    #batch_df.printSchema()
+    try:
+        batch_df.write \
+          .format("org.apache.spark.sql.cassandra") \
+          .options(table="measurement", keyspace="poc") \
+          .mode("append") \
+          .option("spark.cassandra.output.ignoreNulls", "true") \
+          .save()
+    except Exception as e:
+        print(f"Error writing to Cassandra: {str(e)}")
+
+
+
+kafka_df.writeStream \
+  .foreachBatch(write_to_cassandra) \
+  .outputMode("append") \
+  .option("checkpointLocation", "/var/log/spark/checkpoints") \
+  .start() \
+  .awaitTermination()
