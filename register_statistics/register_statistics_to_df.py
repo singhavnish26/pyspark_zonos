@@ -2,11 +2,15 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
 from pyspark.sql.types import StructType, StructField, StringType, ArrayType, IntegerType, FloatType, DateType
 
+
 # Create Spark session
 spark = SparkSession \
-    .builder \
-    .appName("KafkaStreamToConsole") \
-    .getOrCreate()
+  .builder \
+  .appName("KafkaStreamToCassandra") \
+  .config("spark.cassandra.connection.host", "13.232.25.194") \
+  .config("spark.cassandra.auth.username", "cassandra") \
+  .config("spark.cassandra.auth.password", "cassandra") \
+  .getOrCreate()
 
 # Set the Spark log level to ERROR
 sc = spark.sparkContext
@@ -56,10 +60,33 @@ kafka_df = kafka_df \
 # print the schema of the modified DataFrame
 kafka_df.printSchema()
 
-query = kafka_df \
+#Print to console
+"""query = kafka_df \
   .writeStream \
   .format("console") \
   .option("truncate", "false") \
   .start()
 
-query.awaitTermination()
+query.awaitTermination()"""
+
+# Write the parsed DataFrame to Cassandra using foreachBatch
+def write_to_cassandra(batch_df, batch_id):
+    #batch_df.printSchema()
+    try:
+        batch_df.write \
+          .format("org.apache.spark.sql.cassandra") \
+          .options(table="reg_stat", keyspace="poc") \
+          .mode("append") \
+          .option("spark.cassandra.output.ignoreNulls", "true") \
+          .save()
+    except Exception as e:
+        print(f"Error writing to Cassandra: {str(e)}")
+
+
+
+kafka_df.writeStream \
+  .foreachBatch(write_to_cassandra) \
+  .outputMode("append") \
+  .option("checkpointLocation", "/var/log/spark/checkpoints") \
+  .start() \
+  .awaitTermination()
