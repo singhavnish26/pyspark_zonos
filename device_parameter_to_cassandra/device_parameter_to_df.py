@@ -1,4 +1,3 @@
-I am posting a pyspark code and if you understand it just say "OK" and nothing else unless there is an error:
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType
 from pyspark.sql.functions import from_json, col
 from pyspark.sql import SparkSession
@@ -78,19 +77,3 @@ kafka_df.writeStream \
   .outputMode("append") \
   .start() \
   .awaitTermination()
-
-
-------------------------------------
-
-Modify the code for change of kafka topic to :ext_device-topology_10121
-JSON Record sample Output of the above mentioned topic:
-{
-  "device" : "cm@34001330",
-  "receiveTime" : "2021-12-22T08:05:37.957Z",
-  "persistTime" : "2021-12-22T08:05:37.957Z",
-  "children" : [ {
-    "childDevice" : "34001330",
-    "addTime" : "2021-12-22T08:05:37Z",
-    "dataSource" : "Control Panel"
-  } ]
-}
