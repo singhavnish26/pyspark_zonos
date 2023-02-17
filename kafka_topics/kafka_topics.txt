@@ -5,7 +5,7 @@
     ext_device-parameter_10121
     ext_device-process_10121
     ext_device-profile-facts_10121
-ext_device-telemetry_10121
+    ext_device-telemetry_10121
     ext_device-topology_10121
 ext_metering-point_10121-- na
 ext_operational-process_10121
