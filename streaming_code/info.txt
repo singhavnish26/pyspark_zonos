@@ -1,0 +1,14 @@
+This code sends data from following kafka topic to cassandra tables:
+
+"ext_device-event_10121"
+"ext_device-telemetry_10121"
+"ext_device_10121"
+"ext_device-measurement_10121"
+"ext_register-statistic_10121"
+"ext_device-process_10121"
+"ext_device-parameter_10121"
+"ext_device-profile-facts_10121"
+
+Issues: 
+1. Not getting data for device-profile-facts_10121, device-parameter_10121
+2. need to investigate if all of the data that is coming from kafka is going in the cassandra db
