@@ -1,0 +1,17 @@
+{
+  "device" : "LNT32001068",
+  "register" : "1-0:9.8.5*255",
+  "date" : "2023-01-23",
+  "meterReads" : {
+    "expected" : 24,
+    "received" : 0,
+    "edited" : 0,
+    "invalidated" : 0,
+    "estimated" : 0
+  },
+  "deliveryDelay" : {
+    "minimum" : 0,
+    "maximum" : 0,
+    "average" : 0.0
+  }
+}

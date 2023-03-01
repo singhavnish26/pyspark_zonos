@@ -1,0 +1,31 @@
+CREATE KEYSPACE IF NOT EXISTS reporting
+WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+
+
+CREATE TABLE reporting.dev_measurement1 (
+                        device text,
+                        register text,
+                        measuretime text,
+                        persisttime text,
+                        profile text,
+                        readingreason text,
+                        receivetime timestamp,
+                        unit text,
+                        value float,
+                        PRIMARY KEY (device, receivetime)
+                        ) WITH CLUSTERING ORDER BY (receivetime DESC);
+
+
+
+CREATE TABLE IF NOT EXISTS reporting.dev_event (
+    device text,
+    event text,
+    firstOccurrenceTime timestamp,
+    lastOccurrenceTime timestamp,
+    occurrenceCount int,
+    receiveTime timestamp,
+    persistTime timestamp,
+    state text,
+    context text,
+    PRIMARY KEY ((device, event), receiveTime)
+) WITH CLUSTERING ORDER BY (receiveTime DESC);

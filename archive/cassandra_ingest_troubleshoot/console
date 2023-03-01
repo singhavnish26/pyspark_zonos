@@ -1,0 +1,5 @@
+# Print the flattened dataframe as a table
+query = kafka_df.writeStream.outputMode("append").format("console").option("truncate", False).start()
+
+# Wait for the query to finish
+query.awaitTermination()

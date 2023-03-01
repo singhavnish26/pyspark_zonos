@@ -1,0 +1,23 @@
+{
+  "id" : 87216,
+  "type" : "DCT_ReadProfile",
+  "device" : "DPS-Test",
+  "persistTime" : "2023-01-25T08:27:08.991Z",
+  "initTime" : "2022-12-01T09:26:56Z",
+  "startTime" : "2023-01-25T08:26:59Z",
+  "previous" : {
+    "status" : "executing"
+  },
+  "current" : {
+    "status" : "failed",
+    "error" : "Failed to add task 964465b7-3738-461e-bc8e-8d99995ae1dd for device DPS-Test: Failed to parse URI string"
+  },
+  "completionTime" : "2023-01-25T07:27:04Z",
+  "executionType" : "recurring",
+  "parameters" : {
+    "profileRead" : {
+      "profileId" : "Instantaneous Profile",
+      "readingReasonCode" : "1"
+    }
+  }
+}
