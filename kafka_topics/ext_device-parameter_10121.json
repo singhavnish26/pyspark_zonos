@@ -1,9 +1,0 @@
-{
-  "device" : "JPM10050291",
-  "parameter" : "dlms.ciphering_mode",
-  "changeTime" : "2023-01-31T12:10:14.740Z",
-  "receiveTime" : "2023-01-31T12:10:14.740Z",
-  "persistTime" : "2023-01-31T12:10:14.740Z",
-  "newValue" : "1",
-  "oldValue" : ""
-}
