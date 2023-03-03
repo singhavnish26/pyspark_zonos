@@ -1,7 +1,6 @@
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType, ArrayType, FloatType, DateType, DoubleType
 from pyspark.sql.functions import from_json, col, to_date, current_date, max
 from pyspark.sql import SparkSession
-
+from schema import schema1, schema2
 # Create Spark session
 spark = SparkSession \
     .builder \
@@ -19,47 +18,6 @@ sc.setLogLevel('ERROR')
 kafka_host = "minor.zonos.engrid.in:9092"
 topic1 = "ext_device_10121"
 topic2 = "ext_device-telemetry_10121"
-
-
-schema1 = StructType([
-    StructField("persistTime", TimestampType()),
-    StructField("current", StructType([
-        StructField("device", StringType()),
-        StructField("type", StringType()),
-        StructField("group", StringType()),
-        StructField("inventoryState", StringType()),
-        StructField("managementState", StringType()),
-        StructField("communicationId", StringType()),
-        StructField("manufacturer", StringType()),
-        StructField("description", StringType()),
-        StructField("model", StringType()),
-        StructField("location", StructType([
-            StructField("geo", StructType([
-                StructField("latitude", StringType()),
-                StructField("longitude", StringType())
-            ])),
-            StructField("address", StructType([
-                StructField("city", StringType()),
-                StructField("postalCode", StringType()),
-                StructField("street", StringType()),
-                StructField("houseNumber", StringType()),
-                StructField("floor", StringType()),
-                StructField("company", StringType()),
-                StructField("country", StringType()),
-                StructField("reference", StringType()),
-                StructField("timeZone", StringType()),
-                StructField("region", StringType()),
-                StructField("district", StringType())
-            ])),
-            StructField("logicalInstallationPoint", StringType())
-        ])),
-        StructField("tags", StringType())
-    ]))
-])
-schema2 = StructType([
-    StructField("device", StringType(), True),
-    StructField("lastReceiveTime", TimestampType(), True)
-])
 
 df1 = spark \
     .readStream \
